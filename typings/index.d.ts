@@ -71,7 +71,7 @@ interface CarouselStoreInterface {
 
 declare const CarouselContext: React.Context<CarouselStoreInterface>
 
-interface CarouselProviderProps {
+type CarouselProviderBaseProps = {
   readonly children: React.ReactNode
   readonly className?: string
   readonly currentSlide?: CarouselState['currentSlide']
@@ -81,8 +81,6 @@ interface CarouselProviderProps {
   readonly interval?: number
   readonly isPlaying?: boolean
   readonly lockOnWindowScroll?: CarouselState['lockOnWindowScroll']
-  readonly naturalSlideHeight: CarouselState['naturalSlideHeight']
-  readonly naturalSlideWidth: CarouselState['naturalSlideWidth']
   readonly playDirection?: 'forward'|'backward'
   readonly orientation?: CarouselState['orientation']
   readonly step?: CarouselState['step']
@@ -96,14 +94,28 @@ interface CarouselProviderProps {
   readonly isIntrinsicHeight?: CarouselState['isIntrinsicHeight']
 }
 
+type RequiredSlideSizes = {
+  readonly naturalSlideHeight: CarouselState['naturalSlideHeight']
+  readonly naturalSlideWidth: CarouselState['naturalSlideWidth']
+}
+
+type RequiredIntrinsicHeight = {
+  readonly isIntrinsicHeight: true
+  readonly naturalSlideHeight?: CarouselState['naturalSlideHeight']
+  readonly naturalSlideWidth?: CarouselState['naturalSlideWidth']
+}
+
+type CarouselProviderProps = CarouselProviderBaseProps & (RequiredSlideSizes | RequiredIntrinsicHeight)
+
 type CarouselProviderInterface = React.ComponentClass<CarouselProviderProps>
 /**
  * CarouselProvider allows the other carousel components to communicate with each other.
  *
  * The only required properties are:
- * the totalSlides, naturalSlideWidth, and naturalSlideHeight.
+ * the `totalSlides`, `naturalSlideWidth`, and `naturalSlideHeight`.
+ * If `isIntrinsicHeight` is `true`, then natural slide sizes are not required.
  *
- * The naturalSlideWidth and naturalSlideHeight are used
+ * The `naturalSlideWidth` and `naturalSlideHeight` are used
  * to create an aspect ratio for each slide.
  *
  * Since the carousel is responsive by default,
